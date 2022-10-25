@@ -1,11 +1,16 @@
-import json
-from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+# import json
+# from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-from code import parse_data, summarise, encoder
-import joblib
+# from code import parse_data, summarise, encoder
+# import joblib
 
 
 def main():
+    """
+    TO-DO 
+
+    Add in predictions for unseen test set
+
     # Parse command line arguments
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-d", "--data", default="NA", help="Test data")
@@ -23,14 +28,9 @@ def main():
 
     gene = parse_data(data)
     summarised = summarise(gene)
-    # encoded = encoder(summarised, method="test")
+    encoded = encoder(summarised, method="test")
 
-    # clf = joblib.load(saved_model)
-
-    """
-    TO-DO (remember to uncomment encoded and clf)
-
-    Add in predictions for unseen test set
+    clf = joblib.load(saved_model)
     """
 
     return
