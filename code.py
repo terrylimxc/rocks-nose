@@ -1,9 +1,8 @@
 import json
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import joblib
 import pandas as pd
-
 from imblearn.combine import SMOTETomek
 from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.under_sampling import TomekLinks
@@ -170,9 +169,9 @@ def summarise(df, method="mean"):
 
 def encoder(data, method="train"):
     """
-    In the handout, it was explained that the nucleotide column of the dataset represents the combined nucleotides
-    from the neighboring 1-flanking position. Since this column is in the form of string data,
-    encoding should be carried out to convert these strings into categorical data.
+    In the handout, it was explained that the nucleotide column of the dataset represents the 
+    combined nucleotides from the neighboring 1-flanking position. Since this column is in the form
+    of string data, encoding should be carried out to convert these strings into categorical data.
 
     After the encoding is done, a joblib file would be created to encode the future test set
 
@@ -221,7 +220,8 @@ def smote_tomek_resample(df):
 
 def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     """
-    Given indices prepared from test splits, prepare x and y values for train/test from initial read data
+    Given indices prepared from test splits, prepare x and y values for train/test from 
+    initial read data
     - removal of columns is performed within this function
     """
     # Check overlap
@@ -250,7 +250,8 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
 
 def train(df, method="SmoteTomek", out="model"):
     """
-    Method used to train model for prediction, allows user to train two types of model (SmoteTomek or BalancedRFClassifier)
+    Method used to train model for prediction, allows user to train two types of model 
+    (SmoteTomek or BalancedRFClassifier)
     Creates a jobib file to save the model when done
 
     Input: encoded train dataframe, method
@@ -258,10 +259,10 @@ def train(df, method="SmoteTomek", out="model"):
     splitter = GroupShuffleSplit(n_splits=5, test_size=0.20, random_state=4262)
     temp = splitter.split(df, groups=df["gene_id"])
 
-    roc = []
-    pr = []
-    ap = []
-    counter = 0
+    # roc = []
+    # pr = []
+    # ap = []
+    # counter = 0
     for train_index, test_index in temp:
         X_train, y_train, X_test, y_test = prepare_train_test_data(
             df, train_index, test_index
