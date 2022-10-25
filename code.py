@@ -169,7 +169,7 @@ def summarise(df, method="mean"):
 
 def encoder(data, method="train"):
     """
-    In the handout, it was explained that the nucleotide column of the dataset represents the 
+    In the handout, it was explained that the nucleotide column of the dataset represents the
     combined nucleotides from the neighboring 1-flanking position. Since this column is in the form
     of string data, encoding should be carried out to convert these strings into categorical data.
 
@@ -220,7 +220,7 @@ def smote_tomek_resample(df):
 
 def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     """
-    Given indices prepared from test splits, prepare x and y values for train/test from 
+    Given indices prepared from test splits, prepare x and y values for train/test from
     initial read data
     - removal of columns is performed within this function
     """
@@ -250,7 +250,7 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
 
 def train(df, method="SmoteTomek", out="model"):
     """
-    Method used to train model for prediction, allows user to train two types of model 
+    Method used to train model for prediction, allows user to train two types of models
     (SmoteTomek or BalancedRFClassifier)
     Creates a jobib file to save the model when done
 
