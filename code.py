@@ -1,10 +1,16 @@
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-import pandas as pd
 import json
-import joblib
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-from sklearn.preprocessing import OrdinalEncoder
+import joblib
+import pandas as pd
+
+from imblearn.combine import SMOTETomek
+from imblearn.ensemble import BalancedRandomForestClassifier
+from imblearn.under_sampling import TomekLinks
 from sklearn.model_selection import GroupShuffleSplit
+from sklearn.preprocessing import OrdinalEncoder
+from xgboost import XGBClassifier
+
 # from sklearn import preprocessing
 # from sklearn.metrics import (
 #     classification_report,
@@ -14,12 +20,6 @@ from sklearn.model_selection import GroupShuffleSplit
 #     roc_auc_score,
 #     confusion_matrix,
 # )
-
-from imblearn.combine import SMOTETomek
-from imblearn.under_sampling import TomekLinks
-from imblearn.ensemble import BalancedRandomForestClassifier
-
-from xgboost import XGBClassifier
 
 
 def main():
@@ -53,11 +53,11 @@ def main():
     full_data = pd.merge(gene, labels, on=["transcript_id", "position"], how="left")
     summarised = summarise(full_data)
     encoded = encoder(summarised)
- 
+
     # Saved model will be under the same directory
     train(encoded, method=model, out=output_name)
 
-    return  
+    return
 
 
 def parse_data(data_dir):
@@ -100,7 +100,7 @@ def parse_data(data_dir):
             "dwell_3",
             "std_3",
             "mean_3",
-        ]
+        ],
     )
 
     return gene
@@ -207,15 +207,15 @@ def encoder(data, method="train"):
 
         test[["nucleotide-1", "nucleotide", "nucleotide+1"]] = oe.transform(
             test[["nucleotide-1", "nucleotide", "nucleotide+1"]]
-         )
+        )
 
         return test
 
 
 def smote_tomek_resample(df):
     smt = SMOTETomek(tomek=TomekLinks(sampling_strategy="majority"), random_state=4262)
-    X, y = df.drop(columns = ["label"]), df["label"]
-    X_res, y_res = smt.fit_resample(X,y)
+    X, y = df.drop(columns=["label"]), df["label"]
+    X_res, y_res = smt.fit_resample(X, y)
     return X_res, y_res
 
 
@@ -248,7 +248,7 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     return X_train, y_train, X_test, y_test
 
 
-def train(df, method = "SmoteTomek", out = "model"):
+def train(df, method="SmoteTomek", out="model"):
     """
     Method used to train model for prediction, allows user to train two types of model (SmoteTomek or BalancedRFClassifier)
     Creates a jobib file to save the model when done
