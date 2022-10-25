@@ -8,7 +8,7 @@ from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.under_sampling import TomekLinks
 from sklearn.model_selection import GroupShuffleSplit
 from sklearn.preprocessing import OrdinalEncoder
-from tqdm import tqdm
+#from tqdm import tqdm
 from xgboost import XGBClassifier
 
 # from sklearn import preprocessing
@@ -70,11 +70,11 @@ def parse_data(data_dir):
     ouput: transformed train
     """
     genes = []
-    for line in tqdm(open(data_dir, "r")):
+    for line in open(data_dir, "r"):
         genes.append(orjson.loads(line))
 
     lst = []
-    for gene in tqdm(genes):
+    for gene in genes:
         transcript_id = next(iter(gene))
         layer = gene[transcript_id]
         position = next(iter(layer))
