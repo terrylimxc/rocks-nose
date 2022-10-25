@@ -1,23 +1,19 @@
-import sys
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-import warnings
-
 import pandas as pd
-import numpy as np
 import json
 import joblib
 
-from sklearn import preprocessing
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.model_selection import GroupShuffleSplit
-from sklearn.metrics import (
-    classification_report,
-    average_precision_score,
-    precision_recall_curve,
-    auc,
-    roc_auc_score,
-    confusion_matrix,
-)
+# from sklearn import preprocessing
+# from sklearn.metrics import (
+#     classification_report,
+#     average_precision_score,
+#     precision_recall_curve,
+#     auc,
+#     roc_auc_score,
+#     confusion_matrix,
+# )
 
 from imblearn.combine import SMOTETomek
 from imblearn.under_sampling import TomekLinks
@@ -54,23 +50,20 @@ def main():
     labels = labels.rename(columns={"transcript_position": "position"})
 
     gene = parse_data(data)
-    full_data = pd.merge(gene,labels,on=["transcript_id", "position"] ,how="left")
+    full_data = pd.merge(gene, labels, on=["transcript_id", "position"], how="left")
     summarised = summarise(full_data)
     encoded = encoder(summarised)
-
-    # training of model 
+ 
     # Saved model will be under the same directory
     train(encoded, method=model, out=output_name)
 
-    return 
+    return  
 
-
-    
 
 def parse_data(data_dir):
     """
     Takes in training data and transform data into new train with the following columns:
-        ["transcript_id", "position", "nucleotide", "dwell_1", "std_1", "mean_1", 
+        ["transcript_id", "position", "nucleotide", "dwell_1", "std_1", "mean_1",
             "dwell_2", "std_2", "mean_2", "dwell_3", "std_3", "mean_3"]
 
     Input: training data directory
@@ -93,8 +86,8 @@ def parse_data(data_dir):
             lst.append(final_row)
 
     gene = pd.DataFrame(
-        lst, 
-        columns = [
+        lst,
+        columns=[
             "transcript_id",
             "position",
             "nucleotide",
@@ -106,11 +99,12 @@ def parse_data(data_dir):
             "mean_2",
             "dwell_3",
             "std_3",
-            "mean_3"
-            ]
-        )
+            "mean_3",
+        ]
+    )
 
     return gene
+
 
 def summarise(df, method="mean"):
     """
@@ -147,9 +141,9 @@ def summarise(df, method="mean"):
             df.groupby(["gene_id", "transcript_id", "position"]).max().reset_index()
         )
 
-        #rename max dataset
+        # rename max dataset
         max_dataset = max_dataset.rename(
-            columns = {
+            columns={
                 "dwell_1": "dwell_1_max",
                 "std_1": "std_1_max",
                 "mean_1": "mean_1_max",
@@ -158,7 +152,7 @@ def summarise(df, method="mean"):
                 "mean_2": "mean_2_max",
                 "dwell_3": "dwell_3_max",
                 "std_3": "std_3_max",
-                "mean_3": "mean_3_max"
+                "mean_3": "mean_3_max",
             }
         )
 
@@ -166,17 +160,18 @@ def summarise(df, method="mean"):
             min_dataset,
             max_dataset,
             on=["gene_id", "transcript_id", "position", "nucleotide", "label"],
-            how="left"
+            how="left",
         )
         column_to_move = minmax_data.pop("label")
         final_df.insert(22, "label", column_to_move)
 
     return final_df
 
+
 def encoder(data, method="train"):
     """
-    In the handout, it was explained that the nucleotide column of the dataset represents the combined nucleotides 
-    from the neighboring 1-flanking position. Since this column is in the form of string data, 
+    In the handout, it was explained that the nucleotide column of the dataset represents the combined nucleotides
+    from the neighboring 1-flanking position. Since this column is in the form of string data,
     encoding should be carried out to convert these strings into categorical data.
 
     After the encoding is done, a joblib file would be created to encode the future test set
@@ -187,15 +182,15 @@ def encoder(data, method="train"):
 
     if method == "train":
         train = data
-        # Here, the nucleotides are split by indexing 
+        # Here, the nucleotides are split by indexing
         train["nucleotide-1"] = train["nucleotide"].str[0:5]
         train["nucleotide+1"] = train["nucleotide"].str[2:7]
         train["nucleotide"] = train["nucleotide"].str[1:6]
-        
+
         # Initialise ordinal encoder
         oe = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
-        train[["nucleotide-1", "nucleotide","nucleotide+1"]] = oe.fit_transform(
-            train[["nucleotide-1", "nucleotide","nucleotide+1"]]
+        train[["nucleotide-1", "nucleotide", "nucleotide+1"]] = oe.fit_transform(
+            train[["nucleotide-1", "nucleotide", "nucleotide+1"]]
         )
 
         # Creates a joblib file for future encoding of test set
@@ -210,17 +205,19 @@ def encoder(data, method="train"):
         test["nucleotide+1"] = test["nucleotide"].str[2:7]
         test["nucleotide"] = test["nucleotide"].str[1:6]
 
-        test[["nucleotide-1", "nucleotide","nucleotide+1"]] = oe.transform(
-            test[["nucleotide-1", "nucleotide","nucleotide+1"]]
-        )
+        test[["nucleotide-1", "nucleotide", "nucleotide+1"]] = oe.transform(
+            test[["nucleotide-1", "nucleotide", "nucleotide+1"]]
+         )
 
         return test
 
+
 def smote_tomek_resample(df):
-    smt=SMOTETomek(tomek=TomekLinks(sampling_strategy="majority"), random_state=4262)
+    smt = SMOTETomek(tomek=TomekLinks(sampling_strategy="majority"), random_state=4262)
     X, y = df.drop(columns = ["label"]), df["label"]
     X_res, y_res = smt.fit_resample(X,y)
     return X_res, y_res
+
 
 def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     """
@@ -234,7 +231,7 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     print(train_gid.intersection(test_gid))
 
     # Drop identifiers
-    data = data.drop(columns=["gene_id","transcript_id", "position"])
+    data = data.drop(columns=["gene_id", "transcript_id", "position"])
 
     # Split train and test
     train, test = data.iloc[train_idx, :], data.iloc[test_idx, :]
@@ -250,6 +247,7 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
 
     return X_train, y_train, X_test, y_test
 
+
 def train(df, method = "SmoteTomek", out = "model"):
     """
     Method used to train model for prediction, allows user to train two types of model (SmoteTomek or BalancedRFClassifier)
@@ -257,7 +255,7 @@ def train(df, method = "SmoteTomek", out = "model"):
 
     Input: encoded train dataframe, method
     """
-    splitter = GroupShuffleSplit(n_splits=5, test_size=0.20, random_state = 4262)
+    splitter = GroupShuffleSplit(n_splits=5, test_size=0.20, random_state=4262)
     temp = splitter.split(df, groups=df["gene_id"])
 
     roc = []
@@ -265,7 +263,9 @@ def train(df, method = "SmoteTomek", out = "model"):
     ap = []
     counter = 0
     for train_index, test_index in temp:
-        X_train, y_train, X_test, y_test = prepare_train_test_data(df, train_index, test_index)
+        X_train, y_train, X_test, y_test = prepare_train_test_data(
+            df, train_index, test_index
+        )
         # print(y_train.value_counts())
         # print(y_test.value_counts())
 
@@ -297,7 +297,6 @@ def train(df, method = "SmoteTomek", out = "model"):
     #     roc.append(roc_auc)
     #     pr.append(pr_auc)
     #     ap.append(aps)
-
 
     # # print(f"ROC AUC: {sum(roc)/len(roc)}")
     # # print(f"PR AUC: {sum(pr)/len(pr)}")
