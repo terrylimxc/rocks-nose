@@ -101,7 +101,7 @@ def parse_data(data_dir):
             "mean_3",
         ],
     )
-
+    gene["position"] = pd.to_numeric(gene["position"])
     return gene
 
 
