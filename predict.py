@@ -1,7 +1,7 @@
 # import json
 # from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-# from code import parse_data, summarise, encoder
+# from code import encoder, parse_data, summarise
 # import joblib
 
 
