@@ -8,6 +8,7 @@ from code import (
 )
 import joblib
 
+
 def main():
     # Parse command line arguments
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
@@ -15,7 +16,7 @@ def main():
     parser.add_argument(
         "-m",
         "--model",
-        default='model',
+        default="model",
         help="Saved model name from training",
     )
 
@@ -30,15 +31,14 @@ def main():
 
     clf = joblib.load(saved_model)
 
-    '''
+    """
     TO-DO
 
     Add in predictions for unseen test set
-    '''
-    
+    """
+
     return
-    
+
 
 if __name__ == "__main__":
     main()
-
