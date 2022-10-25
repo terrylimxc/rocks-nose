@@ -2,7 +2,6 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import joblib
 import orjson
-
 import pandas as pd
 from imblearn.combine import SMOTETomek
 from imblearn.ensemble import BalancedRandomForestClassifier
@@ -82,7 +81,10 @@ def parse_data(data_dir):
         next_layer = layer[position]
         nucleotide = next(iter(next_layer))
 
-        rows = [[transcript_id, int(position), nucleotide]+i for i in next_layer[nucleotide]]
+        rows = [
+            [transcript_id, int(position), nucleotide] + i 
+            for i in next_layer[nucleotide]
+        ]
         lst.extend(rows)
 
     gene = pd.DataFrame(
