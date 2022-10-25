@@ -1,4 +1,4 @@
-import json
+import orjson
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import joblib
@@ -9,6 +9,7 @@ from imblearn.under_sampling import TomekLinks
 from sklearn.model_selection import GroupShuffleSplit
 from sklearn.preprocessing import OrdinalEncoder
 from xgboost import XGBClassifier
+from tqdm import tqdm
 
 # from sklearn import preprocessing
 # from sklearn.metrics import (
@@ -69,12 +70,12 @@ def parse_data(data_dir):
     ouput: transformed train
     """
     genes = []
-    for line in open(data_dir, "r"):
-        genes.append(json.loads(line))
+    for line in tqdm(open(data_dir, "r")):
+        genes.append(orjson.loads(line))
 
     lst = []
 
-    for j in range(0, len(genes)):
+    for j in tqdm(range(0, len(genes))):
         transcript_id = list(genes[j].keys())[0]
         position = list(genes[j].get(transcript_id).keys())[0]
         nucleotide = list(genes[j].get(transcript_id).get(position).keys())[0]
