@@ -1,4 +1,5 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+
 import joblib
 import orjson
 
@@ -74,16 +75,15 @@ def parse_data(data_dir):
         genes.append(orjson.loads(line))
 
     lst = []
+    for gene in tqdm(genes):
+        transcript_id = next(iter(gene))
+        layer = gene[transcript_id]
+        position = next(iter(layer))
+        next_layer = layer[position]
+        nucleotide = next(iter(next_layer))
 
-    for j in tqdm(range(0, len(genes))):
-        transcript_id = list(genes[j].keys())[0]
-        position = list(genes[j].get(transcript_id).keys())[0]
-        nucleotide = list(genes[j].get(transcript_id).get(position).keys())[0]
-        row = [transcript_id, position, nucleotide]
-
-        for i in genes[j].get(transcript_id).get(position).get(nucleotide):
-            final_row = row + i
-            lst.append(final_row)
+        rows = [[transcript_id, int(position), nucleotide]+i for i in next_layer[nucleotide]]
+        lst.extend(rows)
 
     gene = pd.DataFrame(
         lst,
@@ -102,7 +102,6 @@ def parse_data(data_dir):
             "mean_3",
         ],
     )
-    gene["position"] = pd.to_numeric(gene["position"])
     return gene
 
 
