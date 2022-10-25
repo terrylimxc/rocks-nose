@@ -82,7 +82,7 @@ def parse_data(data_dir):
         nucleotide = next(iter(next_layer))
 
         rows = [
-            [transcript_id, int(position), nucleotide] + i 
+            [transcript_id, int(position), nucleotide] + i
             for i in next_layer[nucleotide]
         ]
         lst.extend(rows)
