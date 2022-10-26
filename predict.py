@@ -1,6 +1,6 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-from code import encoder, parse_data, summarise
+from prepare import encoder, parse_data, summarise
 import joblib
 
 
