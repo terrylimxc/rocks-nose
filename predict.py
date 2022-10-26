@@ -1,5 +1,4 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-
 from prepare import encoder, parse_data, summarise
 import joblib
 
@@ -30,8 +29,8 @@ def main():
     encoded = encoder(summarised, method="test")
 
     clf = joblib.load(saved_model)
-    test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[:,1]
-    
+    test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[:, 1]
+
     results = encoded[["transcript_id", "position"]]
     results["score"] = test_pred
     results = results.rename(columns={"position" : "transcript_position"})
