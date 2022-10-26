@@ -3,8 +3,6 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import joblib
 from prepare import encoder, parse_data, summarise
 
-
-
 def main():
     """
     TO-DO
