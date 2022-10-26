@@ -1,6 +1,8 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from prepare import encoder, parse_data, summarise
+
 import joblib
+from prepare import encoder, parse_data, summarise
+
 
 
 def main():
@@ -13,10 +15,7 @@ def main():
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-d", "--data", default="NA", help="Test data")
     parser.add_argument(
-        "-m",
-        "--model",
-        default="model",
-        help="Saved model name from training"
+        "-m", "--model", default="model", help="Saved model name from training"
     )
 
     args = vars(parser.parse_args())
@@ -29,11 +28,13 @@ def main():
     encoded = encoder(summarised, method="test")
 
     clf = joblib.load(saved_model)
-    test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[:, 1]
+    test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[
+        :, 1
+    ]
 
     results = encoded[["transcript_id", "position"]]
     results["score"] = test_pred
-    results = results.rename(columns={"position" : "transcript_position"})
+    results = results.rename(columns={"position": "transcript_position"})
 
     filename = data + ".csv"
     joblib.dump(results, filename)
