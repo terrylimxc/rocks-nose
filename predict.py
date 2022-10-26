@@ -1,8 +1,7 @@
-# import json
-# from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-# from code import encoder, parse_data, summarise
-# import joblib
+from code import encoder, parse_data, summarise
+import joblib
 
 
 def main():
@@ -10,7 +9,7 @@ def main():
     TO-DO
 
     Add in predictions for unseen test set
-
+    """
     # Parse command line arguments
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-d", "--data", default="NA", help="Test data")
@@ -18,7 +17,7 @@ def main():
         "-m",
         "--model",
         default="model",
-        help="Saved model name from training",
+        help="Saved model name from training"
     )
 
     args = vars(parser.parse_args())
@@ -31,8 +30,14 @@ def main():
     encoded = encoder(summarised, method="test")
 
     clf = joblib.load(saved_model)
-    """
+    test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[:,1]
+    
+    results = encoded[["transcript_id", "position"]]
+    results["score"] = test_pred
+    results = results.rename(columns={"position" : "transcript_position"})
 
+    filename = data + ".csv"
+    joblib.dump(results, filename)
     return
 
 
