@@ -8,6 +8,7 @@ from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.under_sampling import TomekLinks
 from sklearn.model_selection import GroupShuffleSplit
 from sklearn.preprocessing import OrdinalEncoder
+import pickle
 
 # from tqdm import tqdm
 from xgboost import XGBClassifier
@@ -240,7 +241,7 @@ def encoder(data, method="train"):
         train["nucleotide-1"] = train["nucleotide"].str[0:5]
         train["nucleotide+1"] = train["nucleotide"].str[2:7]
         train["nucleotide"] = train["nucleotide"].str[1:6]
-        
+
         # Initialise ordinal encoder
         oe = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
         train[["nucleotide-1", "nucleotide", "nucleotide+1"]] = oe.fit_transform(
@@ -262,7 +263,7 @@ def encoder(data, method="train"):
         test[["nucleotide-1", "nucleotide", "nucleotide+1"]] = oe.transform(
             test[["nucleotide-1", "nucleotide", "nucleotide+1"]]
         )
-
+        
         return test
 
 
@@ -334,8 +335,8 @@ def train(df, method="SmoteTomek", out="model"):
             clf = BalancedRandomForestClassifier(random_state=4262)
         clf.fit(X_train, y_train)
 
-        filename = out + ".joblib"
-        joblib.dump(clf, filename)
+    filename = out + ".sav"
+    pickle.dump(clf, open(filename, 'wb'))
 
     #     test_pred = clf.predict(X_test)
     #     tn, fp, fn, tp = confusion_matrix(y_test, test_pred).ravel()

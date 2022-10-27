@@ -1,6 +1,6 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-import joblib
+import pickle
 from prepare import encoder, parse_data, summarise
 
 
@@ -15,17 +15,19 @@ def main():
     args = vars(parser.parse_args())
 
     data = args["data"]
-    saved_model = args["model"] + ".joblib"
+    filename = args["model"] + ".sav"
 
     gene = parse_data(data)
     summarised = summarise(gene)
     encoded = encoder(summarised, method="test")
 
-    clf = joblib.load(saved_model)
+    clf = pickle.load(open(filename, 'rb'))
+    test_new = encoded.columns.tolist()[:2] + [encoded.columns.tolist()[-2]] + [encoded.columns.tolist()[-3]] + [encoded.columns.tolist()[-1]] + encoded.columns.tolist()[2:-3]
+    encoded = encoded[test_new]
+    print(encoded.head())
     test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[
         :, 1
     ]
-
     results = encoded[["transcript_id", "position"]]
     results["score"] = test_pred
     #print(test_pred)
