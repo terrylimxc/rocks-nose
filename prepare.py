@@ -52,7 +52,7 @@ def main():
 
     gene = parse_data(data)
     full_data = pd.merge(gene, labels, on=["transcript_id", "position"], how="left")
-    summarised = summarise(full_data)
+    summarised = summarise(full_data, flag=True)
     encoded = encoder(summarised)
 
     # Saved model will be under the same directory
@@ -108,7 +108,7 @@ def parse_data(data_dir):
     return gene
 
 
-def summarise(df, method="mean"):
+def summarise(df, method="mean", flag = False):
     """
     Used to summarise multiple reads of one transcript id into a single data point
     Default method: Mean (Supports median and min-max)
@@ -116,58 +116,110 @@ def summarise(df, method="mean"):
     Input: parsed training data, methods
     Output: Summarised data
     """
+    if flag:
+        nuc = (
+            df[["gene_id", "transcript_id", "position", "nucleotide"]]
+            .groupby(["gene_id", "transcript_id", "position"])["nucleotide"]
+            .unique()
+            .reset_index()
+        )
+        nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
 
-    nuc = (
-        df[["gene_id", "transcript_id", "position", "nucleotide"]]
-        .groupby(["gene_id", "transcript_id", "position"])["nucleotide"]
+        if method == "mean":
+            mean_ds = (
+                df.groupby(["gene_id", "transcript_id", "position"]).mean().reset_index()
+            )
+            final_df = mean_ds.merge(nuc)
+        if method == "median":
+            compressed_df = (
+                df.groupby(["gene_id", "transcript_id", "position"]).median().reset_index()
+            )
+            final_df = compressed_df.merge(nuc)
+        if method == "minmax":
+            min_dataset = (
+                df.groupby(["gene_id", "transcript_id", "position"]).min().reset_index()
+            )
+            max_dataset = (
+                df.groupby(["gene_id", "transcript_id", "position"]).max().reset_index()
+            )
+
+            # rename max dataset
+            max_dataset = max_dataset.rename(
+                columns={
+                    "dwell_1": "dwell_1_max",
+                    "std_1": "std_1_max",
+                    "mean_1": "mean_1_max",
+                    "dwell_2": "dwell_2_max",
+                    "std_2": "std_2_max",
+                    "mean_2": "mean_2_max",
+                    "dwell_3": "dwell_3_max",
+                    "std_3": "std_3_max",
+                    "mean_3": "mean_3_max",
+                }
+            )
+
+            minmax_data = pd.merge(
+                min_dataset,
+                max_dataset,
+                on=["gene_id", "transcript_id", "position", "nucleotide", "label"],
+                how="left",
+            )
+            column_to_move = minmax_data.pop("label")
+            final_df.insert(22, "label", column_to_move)
+
+        return final_df
+    else:
+        nuc = (
+        df[["transcript_id", "position", "nucleotide"]]
+        .groupby(["transcript_id", "position"])["nucleotide"]
         .unique()
         .reset_index()
     )
-    nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
+        nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
 
-    if method == "mean":
-        mean_ds = (
-            df.groupby(["gene_id", "transcript_id", "position"]).mean().reset_index()
-        )
-        final_df = mean_ds.merge(nuc)
-    if method == "median":
-        compressed_df = (
-            df.groupby(["gene_id", "transcript_id", "position"]).median().reset_index()
-        )
-        final_df = compressed_df.merge(nuc)
-    if method == "minmax":
-        min_dataset = (
-            df.groupby(["gene_id", "transcript_id", "position"]).min().reset_index()
-        )
-        max_dataset = (
-            df.groupby(["gene_id", "transcript_id", "position"]).max().reset_index()
-        )
+        if method == "mean":
+            mean_ds = (
+                df.groupby(["transcript_id", "position"]).mean().reset_index()
+            )
+            final_df = mean_ds.merge(nuc)
+        if method == "median":
+            compressed_df = (
+                df.groupby(["transcript_id", "position"]).median().reset_index()
+            )
+            final_df = compressed_df.merge(nuc)
+        if method == "minmax":
+            min_dataset = (
+                df.groupby(["transcript_id", "position"]).min().reset_index()
+            )
+            max_dataset = (
+                df.groupby(["transcript_id", "position"]).max().reset_index()
+            )
 
-        # rename max dataset
-        max_dataset = max_dataset.rename(
-            columns={
-                "dwell_1": "dwell_1_max",
-                "std_1": "std_1_max",
-                "mean_1": "mean_1_max",
-                "dwell_2": "dwell_2_max",
-                "std_2": "std_2_max",
-                "mean_2": "mean_2_max",
-                "dwell_3": "dwell_3_max",
-                "std_3": "std_3_max",
-                "mean_3": "mean_3_max",
-            }
-        )
+            # rename max dataset
+            max_dataset = max_dataset.rename(
+                columns={
+                    "dwell_1": "dwell_1_max",
+                    "std_1": "std_1_max",
+                    "mean_1": "mean_1_max",
+                    "dwell_2": "dwell_2_max",
+                    "std_2": "std_2_max",
+                    "mean_2": "mean_2_max",
+                    "dwell_3": "dwell_3_max",
+                    "std_3": "std_3_max",
+                    "mean_3": "mean_3_max",
+                }
+            )
 
-        minmax_data = pd.merge(
-            min_dataset,
-            max_dataset,
-            on=["gene_id", "transcript_id", "position", "nucleotide", "label"],
-            how="left",
-        )
-        column_to_move = minmax_data.pop("label")
-        final_df.insert(22, "label", column_to_move)
+            minmax_data = pd.merge(
+                min_dataset,
+                max_dataset,
+                on=["transcript_id", "position", "nucleotide", "label"],
+                how="left",
+            )
+            column_to_move = minmax_data.pop("label")
+            final_df.insert(22, "label", column_to_move)
 
-    return final_df
+        return final_df
 
 
 def encoder(data, method="train"):
@@ -188,7 +240,7 @@ def encoder(data, method="train"):
         train["nucleotide-1"] = train["nucleotide"].str[0:5]
         train["nucleotide+1"] = train["nucleotide"].str[2:7]
         train["nucleotide"] = train["nucleotide"].str[1:6]
-
+        
         # Initialise ordinal encoder
         oe = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
         train[["nucleotide-1", "nucleotide", "nucleotide+1"]] = oe.fit_transform(
@@ -231,10 +283,13 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     train_gid, test_gid = set(data.iloc[train_idx, :].gene_id), set(
         data.iloc[test_idx, :].gene_id
     )
-    print(train_gid.intersection(test_gid))
+    #  print(train_gid.intersection(test_gid))
 
     # Drop identifiers
-    data = data.drop(columns=["gene_id", "transcript_id", "position"])
+    try:
+        data = data.drop(columns=["gene_id", "transcript_id", "position"])
+    except:
+        data = data.drop(columns=["transcript_id", "position"])
 
     # Split train and test
     train, test = data.iloc[train_idx, :], data.iloc[test_idx, :]

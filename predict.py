@@ -5,11 +5,6 @@ from prepare import encoder, parse_data, summarise
 
 
 def main():
-    """
-    TO-DO
-
-    Add in predictions for unseen test set
-    """
     # Parse command line arguments
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-d", "--data", default="NA", help="Test data")
@@ -33,10 +28,11 @@ def main():
 
     results = encoded[["transcript_id", "position"]]
     results["score"] = test_pred
+    #print(test_pred)
     results = results.rename(columns={"position": "transcript_position"})
 
-    filename = data + ".csv"
-    joblib.dump(results, filename)
+    filename = data.split(".json")[0] + ".csv"
+    results.to_csv(filename, index=False)
     return
 
 
