@@ -55,6 +55,10 @@ def main():
     full_data = pd.merge(gene, labels, on=["transcript_id", "position"], how="left")
     summarised = summarise(full_data, flag=True)
     encoded = encoder(summarised)
+    cols = encoded.columns.tolist()
+    new_cols = cols[:1] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[1:-3]
+    encoded = encoded[new_cols]
+    encoded = encoded.astype({'nucleotide-1': 'int64', 'nucleotide': 'int64', 'nucleotide+1': 'int64'})
 
     # Saved model will be under the same directory
     train(encoded, method=model, out=output_name)
@@ -131,12 +135,12 @@ def summarise(df, method="mean", flag = False):
                 df.groupby(["gene_id", "transcript_id", "position"]).mean().reset_index()
             )
             final_df = mean_ds.merge(nuc)
-        if method == "median":
+        elif method == "median":
             compressed_df = (
                 df.groupby(["gene_id", "transcript_id", "position"]).median().reset_index()
             )
             final_df = compressed_df.merge(nuc)
-        if method == "minmax":
+        elif method == "minmax":
             min_dataset = (
                 df.groupby(["gene_id", "transcript_id", "position"]).min().reset_index()
             )
@@ -321,10 +325,9 @@ def train(df, method="SmoteTomek", out="model"):
     # roc = []
     # pr = []
     # ap = []
-    # counter = 0
     for train_index, test_index in temp:
         X_train, y_train, X_test, y_test = prepare_train_test_data(
-            df, train_index, test_index
+            df, train_index, test_index, True
         )
         # print(y_train.value_counts())
         # print(y_test.value_counts())
@@ -334,33 +337,32 @@ def train(df, method="SmoteTomek", out="model"):
         elif method.lower() == "balancedrf":
             clf = BalancedRandomForestClassifier(random_state=4262)
         clf.fit(X_train, y_train)
-
+        
     filename = out + ".sav"
     pickle.dump(clf, open(filename, 'wb'))
-
     #     test_pred = clf.predict(X_test)
     #     tn, fp, fn, tp = confusion_matrix(y_test, test_pred).ravel()
 
-    #     # print(f"True Negative: {tn}/{tn+fp}")
-    #     # print(f"False Positive: {fp}/{tn+fp}")
-    #     # print(f"False Negative: {fn}/{fn+tp}")
-    #     # print(f"True Positive: {tp}/{fn+tp}")
+    #     print(f"True Negative: {tn}/{tn+fp}")
+    #     print(f"False Positive: {fp}/{tn+fp}")
+    #     print(f"False Negative: {fn}/{fn+tp}")
+    #     print(f"True Positive: {tp}/{fn+tp}")
     #     roc_auc = roc_auc_score(y_test, test_pred, labels = [0, 1])
     #     precision_, recall_, _ = precision_recall_curve(y_test, test_pred)
     #     pr_auc = auc(recall_, precision_)
     #     aps = average_precision_score(y_test, clf.predict_proba(X_test)[:,1])
 
-    #     # print(f"ROC AUC: {roc_auc}")
-    #     # print(f"PR AUC: {pr_auc}")
-    #     # print(f"PR AUC #2: {aps}")
+    #     print(f"ROC AUC: {roc_auc}")
+    #     print(f"PR AUC: {pr_auc}")
+    #     print(f"PR AUC #2: {aps}")
 
     #     roc.append(roc_auc)
     #     pr.append(pr_auc)
     #     ap.append(aps)
 
-    # # print(f"ROC AUC: {sum(roc)/len(roc)}")
-    # # print(f"PR AUC: {sum(pr)/len(pr)}")
-    # # print(f"PR AUC AVERAGE PRECISION: {sum(ap)/len(ap)}")
+    # print(f"ROC AUC: {sum(roc)/len(roc)}")
+    # print(f"PR AUC: {sum(pr)/len(pr)}")
+    # print(f"PR AUC AVERAGE PRECISION: {sum(ap)/len(ap)}")
 
 
 if __name__ == "__main__":

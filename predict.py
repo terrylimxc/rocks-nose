@@ -22,15 +22,15 @@ def main():
     encoded = encoder(summarised, method="test")
 
     clf = pickle.load(open(filename, 'rb'))
-    test_new = encoded.columns.tolist()[:2] + [encoded.columns.tolist()[-2]] + [encoded.columns.tolist()[-3]] + [encoded.columns.tolist()[-1]] + encoded.columns.tolist()[2:-3]
+    cols = encoded.columns.tolist()
+    test_new = cols[:2] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[2:-3]
     encoded = encoded[test_new]
-    print(encoded.head())
+    encoded.to_csv("encoded.csv", index=False)
     test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[
         :, 1
     ]
     results = encoded[["transcript_id", "position"]]
     results["score"] = test_pred
-    #print(test_pred)
     results = results.rename(columns={"position": "transcript_position"})
 
     filename = data.split(".json")[0] + ".csv"
