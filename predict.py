@@ -21,7 +21,7 @@ def main():
     summarised = summarise(gene)
     encoded = encoder(summarised, method="test")
 
-    clf = pickle.load(open(filename, 'rb'))
+    clf = pickle.load(open(filename, "rb"))
     cols = encoded.columns.tolist()
     test_new = cols[:2] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[2:-3]
     encoded = encoded[test_new]

@@ -1,3 +1,4 @@
+import pickle
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import joblib
@@ -8,7 +9,6 @@ from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.under_sampling import TomekLinks
 from sklearn.model_selection import GroupShuffleSplit
 from sklearn.preprocessing import OrdinalEncoder
-import pickle
 
 # from tqdm import tqdm
 from xgboost import XGBClassifier
@@ -58,7 +58,9 @@ def main():
     cols = encoded.columns.tolist()
     new_cols = cols[:1] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[1:-3]
     encoded = encoded[new_cols]
-    encoded = encoded.astype({'nucleotide-1': 'int64', 'nucleotide': 'int64', 'nucleotide+1': 'int64'})
+    encoded = encoded.astype(
+        {'nucleotide-1': 'int64', 'nucleotide': 'int64', 'nucleotide+1': 'int64'}
+    )
 
     # Saved model will be under the same directory
     train(encoded, method=model, out=output_name)
@@ -113,7 +115,7 @@ def parse_data(data_dir):
     return gene
 
 
-def summarise(df, method="mean", flag = False):
+def summarise(df, method="mean", flag=False):
     """
     Used to summarise multiple reads of one transcript id into a single data point
     Default method: Mean (Supports median and min-max)
@@ -132,20 +134,28 @@ def summarise(df, method="mean", flag = False):
 
         if method == "mean":
             mean_ds = (
-                df.groupby(["gene_id", "transcript_id", "position"]).mean().reset_index()
+                df.groupby(["gene_id", "transcript_id", "position"])
+                .mean()
+                .reset_index()
             )
             final_df = mean_ds.merge(nuc)
         elif method == "median":
             compressed_df = (
-                df.groupby(["gene_id", "transcript_id", "position"]).median().reset_index()
+                df.groupby(["gene_id", "transcript_id", "position"])
+                .median()
+                .reset_index()
             )
             final_df = compressed_df.merge(nuc)
         elif method == "minmax":
             min_dataset = (
-                df.groupby(["gene_id", "transcript_id", "position"]).min().reset_index()
+                df.groupby(["gene_id", "transcript_id", "position"])
+                .min()
+                .reset_index()
             )
             max_dataset = (
-                df.groupby(["gene_id", "transcript_id", "position"]).max().reset_index()
+                df.groupby(["gene_id", "transcript_id", "position"])
+                .max()
+                .reset_index()
             )
 
             # rename max dataset
@@ -175,17 +185,15 @@ def summarise(df, method="mean", flag = False):
         return final_df
     else:
         nuc = (
-        df[["transcript_id", "position", "nucleotide"]]
-        .groupby(["transcript_id", "position"])["nucleotide"]
-        .unique()
-        .reset_index()
-    )
+            df[["transcript_id", "position", "nucleotide"]]
+            .groupby(["transcript_id", "position"])["nucleotide"]
+            .unique()
+            .reset_index()
+        )
         nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
 
         if method == "mean":
-            mean_ds = (
-                df.groupby(["transcript_id", "position"]).mean().reset_index()
-            )
+            mean_ds = df.groupby(["transcript_id", "position"]).mean().reset_index()
             final_df = mean_ds.merge(nuc)
         if method == "median":
             compressed_df = (
@@ -193,12 +201,8 @@ def summarise(df, method="mean", flag = False):
             )
             final_df = compressed_df.merge(nuc)
         if method == "minmax":
-            min_dataset = (
-                df.groupby(["transcript_id", "position"]).min().reset_index()
-            )
-            max_dataset = (
-                df.groupby(["transcript_id", "position"]).max().reset_index()
-            )
+            min_dataset = df.groupby(["transcript_id", "position"]).min().reset_index()
+            max_dataset = df.groupby(["transcript_id", "position"]).max().reset_index()
 
             # rename max dataset
             max_dataset = max_dataset.rename(
@@ -268,6 +272,7 @@ def encoder(data, method="train"):
             test[["nucleotide-1", "nucleotide", "nucleotide+1"]]
         )
         
+
         return test
 
 
@@ -337,9 +342,10 @@ def train(df, method="SmoteTomek", out="model"):
         elif method.lower() == "balancedrf":
             clf = BalancedRandomForestClassifier(random_state=4262)
         clf.fit(X_train, y_train)
-        
+
+
     filename = out + ".sav"
-    pickle.dump(clf, open(filename, 'wb'))
+    pickle.dump(clf, open(filename, "wb"))
     #     test_pred = clf.predict(X_test)
     #     tn, fp, fn, tp = confusion_matrix(y_test, test_pred).ravel()
 
