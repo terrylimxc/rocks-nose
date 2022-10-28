@@ -132,35 +132,18 @@ def summarise(df, method="mean", flag=False):
         grp_cols = ["transcript_id", "position"]
         on_cols = ["transcript_id", "position", "nucleotide", "label"]
 
-    nuc = (
-        df[subset_cols]
-        .groupby(grp_cols)["nucleotide"]
-        .unique()
-        .reset_index()
-    )
+    nuc = df[subset_cols].groupby(grp_cols)["nucleotide"].unique().reset_index()
     nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
 
     if method == "mean":
-        mean_ds = (
-            df.groupby(grp_cols)
-            .mean()
-            .reset_index()
-        )
+        mean_ds = df.groupby(grp_cols).mean().reset_index()
         final_df = mean_ds.merge(nuc)
     elif method == "median":
-        compressed_df = (
-            df.groupby(grp_cols)
-            .median()
-            .reset_index()
-        )
+        compressed_df = df.groupby(grp_cols).median().reset_index()
         final_df = compressed_df.merge(nuc)
     elif method == "minmax":
-        min_dataset = (
-            df.groupby(grp_cols).min().reset_index()
-        )
-        max_dataset = (
-            df.groupby(grp_cols).max().reset_index()
-        )
+        min_dataset = df.groupby(grp_cols).min().reset_index()
+        max_dataset = df.groupby(grp_cols).max().reset_index()
 
         # rename max dataset
         max_dataset = max_dataset.rename(
@@ -253,9 +236,9 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     #  print(train_gid.intersection(test_gid))
 
     # Drop identifiers
-    try:
+    if "gene_id" in list(data.columns):
         data = data.drop(columns=["gene_id", "transcript_id", "position"])
-    except:
+    else:
         data = data.drop(columns=["transcript_id", "position"])
 
     # Split train and test
