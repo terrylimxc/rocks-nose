@@ -1,6 +1,6 @@
+import pickle
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-import pickle
 from prepare import encoder, parse_data, summarise
 
 

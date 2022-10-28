@@ -59,7 +59,7 @@ def main():
     new_cols = cols[:1] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[1:-3]
     encoded = encoded[new_cols]
     encoded = encoded.astype(
-        {'nucleotide-1': 'int64', 'nucleotide': 'int64', 'nucleotide+1': 'int64'}
+        {"nucleotide-1": "int64", "nucleotide": "int64", "nucleotide+1": "int64"}
     )
 
     # Saved model will be under the same directory
@@ -148,14 +148,10 @@ def summarise(df, method="mean", flag=False):
             final_df = compressed_df.merge(nuc)
         elif method == "minmax":
             min_dataset = (
-                df.groupby(["gene_id", "transcript_id", "position"])
-                .min()
-                .reset_index()
+                df.groupby(["gene_id", "transcript_id", "position"]).min().reset_index()
             )
             max_dataset = (
-                df.groupby(["gene_id", "transcript_id", "position"])
-                .max()
-                .reset_index()
+                df.groupby(["gene_id", "transcript_id", "position"]).max().reset_index()
             )
 
             # rename max dataset
@@ -272,7 +268,6 @@ def encoder(data, method="train"):
             test[["nucleotide-1", "nucleotide", "nucleotide+1"]]
         )
         
-
         return test
 
 
@@ -342,7 +337,6 @@ def train(df, method="SmoteTomek", out="model"):
         elif method.lower() == "balancedrf":
             clf = BalancedRandomForestClassifier(random_state=4262)
         clf.fit(X_train, y_train)
-
 
     filename = out + ".sav"
     pickle.dump(clf, open(filename, "wb"))
