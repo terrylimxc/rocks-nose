@@ -1,3 +1,4 @@
+import pickle
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import joblib
@@ -52,8 +53,14 @@ def main():
 
     gene = parse_data(data)
     full_data = pd.merge(gene, labels, on=["transcript_id", "position"], how="left")
-    summarised = summarise(full_data)
+    summarised = summarise(full_data, flag=True)
     encoded = encoder(summarised)
+    cols = encoded.columns.tolist()
+    new_cols = cols[:1] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[1:-3]
+    encoded = encoded[new_cols]
+    encoded = encoded.astype(
+        {"nucleotide-1": "int64", "nucleotide": "int64", "nucleotide+1": "int64"}
+    )
 
     # Saved model will be under the same directory
     train(encoded, method=model, out=output_name)
@@ -108,7 +115,7 @@ def parse_data(data_dir):
     return gene
 
 
-def summarise(df, method="mean"):
+def summarise(df, method="mean", flag=False):
     """
     Used to summarise multiple reads of one transcript id into a single data point
     Default method: Mean (Supports median and min-max)
@@ -116,32 +123,27 @@ def summarise(df, method="mean"):
     Input: parsed training data, methods
     Output: Summarised data
     """
+    if flag:
+        subset_cols = ["gene_id", "transcript_id", "position", "nucleotide"]
+        grp_cols = ["gene_id", "transcript_id", "position"]
+        on_cols = ["gene_id", "transcript_id", "position", "nucleotide", "label"]
+    else:
+        subset_cols = ["transcript_id", "position", "nucleotide"]
+        grp_cols = ["transcript_id", "position"]
+        on_cols = ["transcript_id", "position", "nucleotide", "label"]
 
-    nuc = (
-        df[["gene_id", "transcript_id", "position", "nucleotide"]]
-        .groupby(["gene_id", "transcript_id", "position"])["nucleotide"]
-        .unique()
-        .reset_index()
-    )
+    nuc = df[subset_cols].groupby(grp_cols)["nucleotide"].unique().reset_index()
     nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
 
     if method == "mean":
-        mean_ds = (
-            df.groupby(["gene_id", "transcript_id", "position"]).mean().reset_index()
-        )
+        mean_ds = df.groupby(grp_cols).mean().reset_index()
         final_df = mean_ds.merge(nuc)
-    if method == "median":
-        compressed_df = (
-            df.groupby(["gene_id", "transcript_id", "position"]).median().reset_index()
-        )
+    elif method == "median":
+        compressed_df = df.groupby(grp_cols).median().reset_index()
         final_df = compressed_df.merge(nuc)
-    if method == "minmax":
-        min_dataset = (
-            df.groupby(["gene_id", "transcript_id", "position"]).min().reset_index()
-        )
-        max_dataset = (
-            df.groupby(["gene_id", "transcript_id", "position"]).max().reset_index()
-        )
+    elif method == "minmax":
+        min_dataset = df.groupby(grp_cols).min().reset_index()
+        max_dataset = df.groupby(grp_cols).max().reset_index()
 
         # rename max dataset
         max_dataset = max_dataset.rename(
@@ -161,7 +163,7 @@ def summarise(df, method="mean"):
         minmax_data = pd.merge(
             min_dataset,
             max_dataset,
-            on=["gene_id", "transcript_id", "position", "nucleotide", "label"],
+            on=on_cols,
             how="left",
         )
         column_to_move = minmax_data.pop("label")
@@ -228,13 +230,16 @@ def prepare_train_test_data(data, train_idx, test_idx, resample_method=False):
     - removal of columns is performed within this function
     """
     # Check overlap
-    train_gid, test_gid = set(data.iloc[train_idx, :].gene_id), set(
-        data.iloc[test_idx, :].gene_id
-    )
-    print(train_gid.intersection(test_gid))
+    # train_gid, test_gid = set(data.iloc[train_idx, :].gene_id), set(
+    #     data.iloc[test_idx, :].gene_id
+    # )
+    #  print(train_gid.intersection(test_gid))
 
     # Drop identifiers
-    data = data.drop(columns=["gene_id", "transcript_id", "position"])
+    if "gene_id" in list(data.columns):
+        data = data.drop(columns=["gene_id", "transcript_id", "position"])
+    else:
+        data = data.drop(columns=["transcript_id", "position"])
 
     # Split train and test
     train, test = data.iloc[train_idx, :], data.iloc[test_idx, :]
@@ -265,10 +270,9 @@ def train(df, method="SmoteTomek", out="model"):
     # roc = []
     # pr = []
     # ap = []
-    # counter = 0
     for train_index, test_index in temp:
         X_train, y_train, X_test, y_test = prepare_train_test_data(
-            df, train_index, test_index
+            df, train_index, test_index, True
         )
         # print(y_train.value_counts())
         # print(y_test.value_counts())
@@ -279,32 +283,31 @@ def train(df, method="SmoteTomek", out="model"):
             clf = BalancedRandomForestClassifier(random_state=4262)
         clf.fit(X_train, y_train)
 
-        filename = out + ".joblib"
-        joblib.dump(clf, filename)
-
+    filename = out + ".sav"
+    pickle.dump(clf, open(filename, "wb"))
     #     test_pred = clf.predict(X_test)
     #     tn, fp, fn, tp = confusion_matrix(y_test, test_pred).ravel()
 
-    #     # print(f"True Negative: {tn}/{tn+fp}")
-    #     # print(f"False Positive: {fp}/{tn+fp}")
-    #     # print(f"False Negative: {fn}/{fn+tp}")
-    #     # print(f"True Positive: {tp}/{fn+tp}")
+    #     print(f"True Negative: {tn}/{tn+fp}")
+    #     print(f"False Positive: {fp}/{tn+fp}")
+    #     print(f"False Negative: {fn}/{fn+tp}")
+    #     print(f"True Positive: {tp}/{fn+tp}")
     #     roc_auc = roc_auc_score(y_test, test_pred, labels = [0, 1])
     #     precision_, recall_, _ = precision_recall_curve(y_test, test_pred)
     #     pr_auc = auc(recall_, precision_)
     #     aps = average_precision_score(y_test, clf.predict_proba(X_test)[:,1])
 
-    #     # print(f"ROC AUC: {roc_auc}")
-    #     # print(f"PR AUC: {pr_auc}")
-    #     # print(f"PR AUC #2: {aps}")
+    #     print(f"ROC AUC: {roc_auc}")
+    #     print(f"PR AUC: {pr_auc}")
+    #     print(f"PR AUC #2: {aps}")
 
     #     roc.append(roc_auc)
     #     pr.append(pr_auc)
     #     ap.append(aps)
 
-    # # print(f"ROC AUC: {sum(roc)/len(roc)}")
-    # # print(f"PR AUC: {sum(pr)/len(pr)}")
-    # # print(f"PR AUC AVERAGE PRECISION: {sum(ap)/len(ap)}")
+    # print(f"ROC AUC: {sum(roc)/len(roc)}")
+    # print(f"PR AUC: {sum(pr)/len(pr)}")
+    # print(f"PR AUC AVERAGE PRECISION: {sum(ap)/len(ap)}")
 
 
 if __name__ == "__main__":

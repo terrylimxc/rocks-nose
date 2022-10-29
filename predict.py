@@ -1,15 +1,10 @@
+import pickle
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-import joblib
 from prepare import encoder, parse_data, summarise
 
 
 def main():
-    """
-    TO-DO
-
-    Add in predictions for unseen test set
-    """
     # Parse command line arguments
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-d", "--data", default="NA", help="Test data")
@@ -20,23 +15,26 @@ def main():
     args = vars(parser.parse_args())
 
     data = args["data"]
-    saved_model = args["model"] + ".joblib"
+    filename = args["model"] + ".sav"
 
     gene = parse_data(data)
     summarised = summarise(gene)
     encoded = encoder(summarised, method="test")
 
-    clf = joblib.load(saved_model)
+    clf = pickle.load(open(filename, "rb"))
+    cols = encoded.columns.tolist()
+    test_new = cols[:2] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[2:-3]
+    encoded = encoded[test_new]
+    encoded.to_csv("encoded.csv", index=False)
     test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[
         :, 1
     ]
-
     results = encoded[["transcript_id", "position"]]
     results["score"] = test_pred
     results = results.rename(columns={"position": "transcript_position"})
 
-    filename = data + ".csv"
-    joblib.dump(results, filename)
+    filename = data.split(".json")[0] + ".csv"
+    results.to_csv(filename, index=False)
     return
 
 
