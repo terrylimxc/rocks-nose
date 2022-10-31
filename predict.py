@@ -35,7 +35,6 @@ def main():
 
     filename = data.split(".json")[0] + ".csv"
     results.to_csv(filename, index=False)
-    return
 
 
 if __name__ == "__main__":
