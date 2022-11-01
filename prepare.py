@@ -42,7 +42,9 @@ def main():
     sd1 = dd.from_pandas(gene, npartitions=3)
     sd2 = dd.from_pandas(labels, npartitions=3)
     with TqdmCallback(desc="Adding Labels"):
-        full_data = sd1.merge(sd2, how="left", on=["transcript_id", "position"]).compute()
+        full_data = sd1.merge(
+            sd2, how="left", on=["transcript_id", "position"]
+        ).compute()
 
     # Summarise dataframe, i.e. compress rows
     print("Summarising Data")

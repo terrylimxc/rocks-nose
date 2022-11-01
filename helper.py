@@ -1,17 +1,16 @@
+import os
 import pickle
+from pathlib import Path
 
 import joblib
 import orjson
-import os
 import pandas as pd
-from pathlib import Path
 from imblearn.combine import SMOTETomek
 from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.under_sampling import TomekLinks
 from sklearn.model_selection import GroupShuffleSplit
 from sklearn.preprocessing import OrdinalEncoder
 from tqdm import tqdm
-
 from xgboost import XGBClassifier
 
 pd.options.mode.chained_assignment = None
@@ -35,13 +34,8 @@ def parse_data(data_dir):
                 genes.append(line)
             f.close()
 
-    # with open(data_dir, "r") as f:
-    #     for line in tqdm(f, total=121838, desc="Reading File"):
-    #         genes.append(orjson.loads(line))
-    #     f.close()
-
     lst = []
-    for gene in tqdm(genes, desc = "Parsing Data"):
+    for gene in tqdm(genes, desc="Parsing Data"):
         transcript_id = next(iter(gene))
         layer = gene[transcript_id]
         position = next(iter(layer))
