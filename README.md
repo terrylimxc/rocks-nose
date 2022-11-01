@@ -34,7 +34,7 @@ You can then add a message to describe your proposal.)
 9. If all is good, a maintainer will review your PR :)
 
 ### Style Guide
-Official Style Guide: http://www.python.org/dev/peps/pep-0008/
+Official Style Guide: [Pep 8](http://www.python.org/dev/peps/pep-0008/)
 
 ## Team
 * [Chan Wen Yong](https://github.com/wenyong13)
