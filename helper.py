@@ -104,40 +104,39 @@ def summarise(df, method="mean", flag=False):
             df.groupby(grp_cols)[val_cols].median(numeric_only=False).reset_index()
         )
         final_df = median_df.merge(nuc)
-    # elif method == "minmax":
-    # Got errror...
-    # min_df = df.groupby(grp_cols)[val_cols].min(numeric_only=False).reset_index()
-    # max_df = df.groupby(grp_cols)[val_cols].max(numeric_only=False).reset_index()
+    elif method == "minmax":
+        min_df = df.groupby(grp_cols)[val_cols].min(numeric_only=False).reset_index()
+        max_df = df.groupby(grp_cols)[val_cols].max(numeric_only=False).reset_index()
 
-    # min_df = min_df.merge(nuc)
-    # max_df = max_df.merge(nuc)
+        min_df = min_df.merge(nuc)
+        max_df = max_df.merge(nuc)
 
-    # # rename dataframes
-    # min_df = min_df.rename(
-    #     columns={
-    #         "dwell_1": "dwell_1_min", "std_1": "std_1_min", "mean_1": "mean_1_min",
-    #         "dwell_2": "dwell_2_min", "std_2": "std_2_min", "mean_2": "mean_2_min",
-    #         "dwell_3": "dwell_3_min", "std_3": "std_3_min", "mean_3": "mean_3_min",
-    #     }
-    # )
-    # max_df = max_df.rename(
-    #     columns={
-    #         "dwell_1": "dwell_1_max", "std_1": "std_1_max", "mean_1": "mean_1_max",
-    #         "dwell_2": "dwell_2_max", "std_2": "std_2_max", "mean_2": "mean_2_max",
-    #         "dwell_3": "dwell_3_max", "std_3": "std_3_max", "mean_3": "mean_3_max",
-    #     }
-    # )
+        # rename dataframes
+        min_df = min_df.rename(
+            columns={
+                "dwell_1": "dwell_1_min", "std_1": "std_1_min", "mean_1": "mean_1_min",
+                "dwell_2": "dwell_2_min", "std_2": "std_2_min", "mean_2": "mean_2_min",
+                "dwell_3": "dwell_3_min", "std_3": "std_3_min", "mean_3": "mean_3_min",
+            }
+        )
+        max_df = max_df.rename(
+            columns={
+                "dwell_1": "dwell_1_max", "std_1": "std_1_max", "mean_1": "mean_1_max",
+                "dwell_2": "dwell_2_max", "std_2": "std_2_max", "mean_2": "mean_2_max",
+                "dwell_3": "dwell_3_max", "std_3": "std_3_max", "mean_3": "mean_3_max",
+            }
+        )
 
-    # minmax_data = pd.merge(
-    #     min_df,
-    #     max_df,
-    #     on=on_cols,
-    #     how="left",
-    # )
-    # column_to_move = minmax_data.pop("label")
-    # final_df.insert(22, "label", column_to_move)
+        minmax_data = pd.merge(
+            min_df,
+            max_df,
+            on=on_cols,
+            how="left",
+        )
+        column_to_move = minmax_data.pop("label")
+        final_df.insert(22, "label", column_to_move)
 
-    return final_df
+        return final_df
 
 
 def encoder(data, method="train"):
