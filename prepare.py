@@ -1,7 +1,7 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import pandas as pd
-from helper import parse_data, summarise, encoder, train
+from helper import encoder, parse_data, summarise, train
 
 pd.options.mode.chained_assignment = None
 

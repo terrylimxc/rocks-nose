@@ -1,7 +1,6 @@
 import orjson
 import pandas as pd
 
-pd.options.mode.chained_assignment = None
 import pickle
 
 import joblib
@@ -13,6 +12,8 @@ from sklearn.preprocessing import OrdinalEncoder
 
 # from tqdm import tqdm
 from xgboost import XGBClassifier
+
+pd.options.mode.chained_assignment = None
 
 
 def parse_data(data_dir):
