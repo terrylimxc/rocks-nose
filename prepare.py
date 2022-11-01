@@ -2,7 +2,9 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from helper import *
 
 import pandas as pd
+
 pd.options.mode.chained_assignment = None
+
 
 def main():
     # Parse command line arguments
@@ -44,6 +46,7 @@ def main():
 
     # Saved model will be under the same directory
     train(encoded, method=model, out=output_name)
+
 
 if __name__ == "__main__":
     main()

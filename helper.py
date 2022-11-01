@@ -1,5 +1,6 @@
 import orjson
 import pandas as pd
+
 pd.options.mode.chained_assignment = None
 import joblib
 import pickle
@@ -12,6 +13,7 @@ from sklearn.preprocessing import OrdinalEncoder
 
 # from tqdm import tqdm
 from xgboost import XGBClassifier
+
 
 def parse_data(data_dir):
     """
@@ -43,10 +45,18 @@ def parse_data(data_dir):
     gene = pd.DataFrame(
         lst,
         columns=[
-            "transcript_id", "position", "nucleotide",
-            "dwell_1", "std_1", "mean_1",
-            "dwell_2", "std_2", "mean_2",
-            "dwell_3", "std_3", "mean_3",
+            "transcript_id", 
+            "position", 
+            "nucleotide",
+            "dwell_1", 
+            "std_1", 
+            "mean_1",
+            "dwell_2", 
+            "std_2", 
+            "mean_2",
+            "dwell_3", 
+            "std_3", 
+            "mean_3", 
         ],
     )
     return gene
@@ -69,7 +79,18 @@ def summarise(df, method="mean", flag=False):
         grp_cols = ["transcript_id", "position"]
         on_cols = ["transcript_id", "position", "nucleotide", "label"]
 
-    val_cols = ["dwell_1", "std_1", "mean_1", "dwell_2", "std_2", "mean_2", "dwell_3", "std_3", "mean_3", "label"]
+    val_cols = [
+        "dwell_1", 
+        "std_1", 
+        "mean_1", 
+        "dwell_2", 
+        "std_2", 
+        "mean_2", 
+        "dwell_3", 
+        "std_3", 
+        "mean_3", 
+        "label", 
+    ]
 
     nuc = df[subset_cols].groupby(grp_cols)["nucleotide"].unique().reset_index()
     nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
@@ -78,42 +99,45 @@ def summarise(df, method="mean", flag=False):
         mean_ds = df.groupby(grp_cols)[val_cols].mean(numeric_only=False).reset_index()
         final_df = mean_ds.merge(nuc)
     elif method == "median":
-        median_df = df.groupby(grp_cols)[val_cols].median(numeric_only=False).reset_index()
+        median_df = (
+            df.groupby(grp_cols)[val_cols].median(numeric_only=False).reset_index()
+        )
         final_df = median_df.merge(nuc)
-    elif method == "minmax":
+    # elif method == "minmax":
         # Got errror...
-        min_df = df.groupby(grp_cols)[val_cols].min(numeric_only=False).reset_index()
-        max_df = df.groupby(grp_cols)[val_cols].max(numeric_only=False).reset_index()
+        # min_df = df.groupby(grp_cols)[val_cols].min(numeric_only=False).reset_index()
+        # max_df = df.groupby(grp_cols)[val_cols].max(numeric_only=False).reset_index()
 
-        min_df = min_df.merge(nuc)
-        max_df = max_df.merge(nuc)
+        # min_df = min_df.merge(nuc)
+        # max_df = max_df.merge(nuc)
 
-        # rename dataframes
-        min_df = min_df.rename(
-            columns={
-                "dwell_1": "dwell_1_min", "std_1": "std_1_min", "mean_1": "mean_1_min",
-                "dwell_2": "dwell_2_min", "std_2": "std_2_min", "mean_2": "mean_2_min",
-                "dwell_3": "dwell_3_min", "std_3": "std_3_min", "mean_3": "mean_3_min",
-            }
-        )
-        max_df = max_df.rename(
-            columns={
-                "dwell_1": "dwell_1_max", "std_1": "std_1_max", "mean_1": "mean_1_max",
-                "dwell_2": "dwell_2_max", "std_2": "std_2_max", "mean_2": "mean_2_max",
-                "dwell_3": "dwell_3_max", "std_3": "std_3_max", "mean_3": "mean_3_max",
-            }
-        )
+        # # rename dataframes
+        # min_df = min_df.rename(
+        #     columns={
+        #         "dwell_1": "dwell_1_min", "std_1": "std_1_min", "mean_1": "mean_1_min",
+        #         "dwell_2": "dwell_2_min", "std_2": "std_2_min", "mean_2": "mean_2_min",
+        #         "dwell_3": "dwell_3_min", "std_3": "std_3_min", "mean_3": "mean_3_min",
+        #     }
+        # )
+        # max_df = max_df.rename(
+        #     columns={
+        #         "dwell_1": "dwell_1_max", "std_1": "std_1_max", "mean_1": "mean_1_max",
+        #         "dwell_2": "dwell_2_max", "std_2": "std_2_max", "mean_2": "mean_2_max",
+        #         "dwell_3": "dwell_3_max", "std_3": "std_3_max", "mean_3": "mean_3_max",
+        #     }
+        # )
 
-        minmax_data = pd.merge(
-            min_df,
-            max_df,
-            on=on_cols,
-            how="left",
-        )
-        column_to_move = minmax_data.pop("label")
-        final_df.insert(22, "label", column_to_move)
+        # minmax_data = pd.merge(
+        #     min_df,
+        #     max_df,
+        #     on=on_cols,
+        #     how="left",
+        # )
+        # column_to_move = minmax_data.pop("label")
+        # final_df.insert(22, "label", column_to_move)
 
     return final_df
+
 
 def encoder(data, method="train"):
     """
@@ -223,6 +247,7 @@ def train(df, method="SmoteTomek", out="model"):
     filename = out + ".sav"
     pickle.dump(clf, open(filename, "wb"))
 
+
 def train_val(df, method="SmoteTomek", out="model"):
     """
     Method used to train model for prediction, allows user to train two types of models
@@ -238,6 +263,7 @@ def train_val(df, method="SmoteTomek", out="model"):
         roc_auc_score,
         confusion_matrix,
     )
+
     splitter = GroupShuffleSplit(n_splits=5, test_size=0.20, random_state=4262)
     temp = splitter.split(df, groups=df["gene_id"])
 
@@ -268,10 +294,10 @@ def train_val(df, method="SmoteTomek", out="model"):
         print(f"False Positive: {fp}/{tn+fp}")
         print(f"False Negative: {fn}/{fn+tp}")
         print(f"True Positive: {tp}/{fn+tp}")
-        roc_auc = roc_auc_score(y_test, test_pred, labels = [0, 1])
+        roc_auc = roc_auc_score(y_test, test_pred, labels=[0, 1])
         precision_, recall_, _ = precision_recall_curve(y_test, test_pred)
         pr_auc = auc(recall_, precision_)
-        aps = average_precision_score(y_test, clf.predict_proba(X_test)[:,1])
+        aps = average_precision_score(y_test, clf.predict_proba(X_test)[:, 1])
 
         print(f"ROC AUC: {roc_auc}")
         print(f"PR AUC: {pr_auc}")
