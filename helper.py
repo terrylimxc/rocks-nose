@@ -74,23 +74,33 @@ def summarise(df, method="mean", flag=False):
         subset_cols = ["gene_id", "transcript_id", "position", "nucleotide"]
         grp_cols = ["gene_id", "transcript_id", "position"]
         on_cols = ["gene_id", "transcript_id", "position", "nucleotide", "label"]
+        val_cols = [
+            "dwell_1",
+            "std_1",
+            "mean_1",
+            "dwell_2",
+            "std_2",
+            "mean_2",
+            "dwell_3",
+            "std_3",
+            "mean_3",
+            "label",
+        ]
     else:
         subset_cols = ["transcript_id", "position", "nucleotide"]
         grp_cols = ["transcript_id", "position"]
-        on_cols = ["transcript_id", "position", "nucleotide", "label"]
-
-    val_cols = [
-        "dwell_1",
-        "std_1",
-        "mean_1",
-        "dwell_2",
-        "std_2",
-        "mean_2",
-        "dwell_3",
-        "std_3",
-        "mean_3",
-        "label",
-    ]
+        on_cols = ["transcript_id", "position", "nucleotide"]
+        val_cols = [
+            "dwell_1",
+            "std_1",
+            "mean_1",
+            "dwell_2",
+            "std_2",
+            "mean_2",
+            "dwell_3",
+            "std_3",
+            "mean_3",
+        ]
 
     nuc = df[subset_cols].groupby(grp_cols)["nucleotide"].unique().reset_index()
     nuc.nucleotide = nuc.nucleotide.apply(lambda x: x[0])
@@ -147,7 +157,7 @@ def summarise(df, method="mean", flag=False):
         column_to_move = minmax_data.pop("label")
         final_df.insert(22, "label", column_to_move)
 
-        return final_df
+    return final_df
 
 
 def encoder(data, method="train"):
@@ -175,13 +185,13 @@ def encoder(data, method="train"):
         )
 
         # Creates a joblib file for future encoding of test set
-        joblib.dump(oe, "nucleotide_encoder.joblib")
+        joblib.dump(oe, "./results/nucleotide_encoder.joblib")
 
         return train
 
     if method == "test":
         test = data
-        oe = joblib.load("nucleotide_encoder.joblib")
+        oe = joblib.load("./results/nucleotide_encoder.joblib")
         test["nucleotide-1"] = test["nucleotide"].str[0:5]
         test["nucleotide+1"] = test["nucleotide"].str[2:7]
         test["nucleotide"] = test["nucleotide"].str[1:6]
@@ -255,7 +265,7 @@ def train(df, method="SmoteTomek", out="model"):
 
     clf.fit(X_train, y_train)
 
-    filename = out + ".sav"
+    filename = "./results/" + out + ".sav"
     pickle.dump(clf, open(filename, "wb"))
 
 
