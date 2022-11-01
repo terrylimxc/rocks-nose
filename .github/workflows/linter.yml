@@ -49,7 +49,7 @@ jobs:
       - name: Super-Linter
         uses: github/super-linter@v4.9.7
         env:
-          FILTER_REGEX_EXCLUDE: .*data/.*
+          FILTER_REGEX_EXCLUDE: .*data/data.*
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
