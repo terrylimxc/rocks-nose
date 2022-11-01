@@ -5,7 +5,6 @@ pd.options.mode.chained_assignment = None
 import pickle
 
 import joblib
-
 from imblearn.combine import SMOTETomek
 from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.under_sampling import TomekLinks
@@ -48,7 +47,7 @@ def parse_data(data_dir):
         columns=[
             "transcript_id",
             "position",
-            "nucleotide"
+            "nucleotide",
             "dwell_1",
             "std_1",
             "mean_1",
@@ -114,16 +113,28 @@ def summarise(df, method="mean", flag=False):
         # rename dataframes
         min_df = min_df.rename(
             columns={
-                "dwell_1": "dwell_1_min", "std_1": "std_1_min", "mean_1": "mean_1_min",
-                "dwell_2": "dwell_2_min", "std_2": "std_2_min", "mean_2": "mean_2_min",
-                "dwell_3": "dwell_3_min", "std_3": "std_3_min", "mean_3": "mean_3_min",
+                "dwell_1": "dwell_1_min",
+                "std_1": "std_1_min",
+                "mean_1": "mean_1_min",
+                "dwell_2": "dwell_2_min",
+                "std_2": "std_2_min",
+                "mean_2": "mean_2_min",
+                "dwell_3": "dwell_3_min",
+                "std_3": "std_3_min",
+                "mean_3": "mean_3_min",
             }
         )
         max_df = max_df.rename(
             columns={
-                "dwell_1": "dwell_1_max", "std_1": "std_1_max", "mean_1": "mean_1_max",
-                "dwell_2": "dwell_2_max", "std_2": "std_2_max", "mean_2": "mean_2_max",
-                "dwell_3": "dwell_3_max", "std_3": "std_3_max", "mean_3": "mean_3_max",
+                "dwell_1": "dwell_1_max",
+                "std_1": "std_1_max",
+                "mean_1": "mean_1_max",
+                "dwell_2": "dwell_2_max",
+                "std_2": "std_2_max",
+                "mean_2": "mean_2_max",
+                "dwell_3": "dwell_3_max",
+                "std_3": "std_3_max",
+                "mean_3": "mean_3_max",
             }
         )
 
