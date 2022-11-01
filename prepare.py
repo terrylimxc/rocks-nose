@@ -25,8 +25,8 @@ def main():
 
     args = vars(parser.parse_args())
 
-    label = args["label"]
-    data = args["data"]
+    label = "./data/" + args["label"]
+    data = "./data/" + args["data"]
     model = args["model"]
     output_name = args["output"]
 
@@ -44,7 +44,7 @@ def main():
         {"nucleotide-1": "int64", "nucleotide": "int64", "nucleotide+1": "int64"}
     )
 
-    # Saved model will be under the same directory
+    # Saved model will be under results directory
     train(encoded, method=model, out=output_name)
 
 
