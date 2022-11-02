@@ -1,5 +1,6 @@
 import os
 import pickle
+from pathlib import Path
 
 import joblib
 import orjson
@@ -9,8 +10,7 @@ from imblearn.ensemble import BalancedRandomForestClassifier
 from imblearn.under_sampling import TomekLinks
 from sklearn.model_selection import GroupShuffleSplit
 from sklearn.preprocessing import OrdinalEncoder
-
-# from tqdm import tqdm
+from tqdm import tqdm
 from xgboost import XGBClassifier
 
 pd.options.mode.chained_assignment = None
@@ -26,11 +26,16 @@ def parse_data(data_dir):
     ouput: transformed train
     """
     genes = []
-    for line in open(data_dir, "r"):
-        genes.append(orjson.loads(line))
+    with tqdm(total=Path(data_dir).stat().st_size, desc="Reading File") as pbar:
+        with open(data_dir, "rb") as f:
+            for line in f:
+                line = orjson.loads(line)
+                pbar.update(f.tell() - pbar.n)
+                genes.append(line)
+            f.close()
 
     lst = []
-    for gene in genes:
+    for gene in tqdm(genes, desc="Parsing Data"):
         transcript_id = next(iter(gene))
         layer = gene[transcript_id]
         position = next(iter(layer))
@@ -270,6 +275,7 @@ def train(df, method="SmoteTomek", out="model"):
 
     clf.fit(X_train, y_train)
 
+    print("Saving Model")
     filename = "./results/" + out + ".sav"
     pickle.dump(clf, open(filename, "wb"))
 

@@ -17,10 +17,19 @@ def main():
     data = "./data/" + args["data"]
     filename = "./results/" + args["model"] + ".sav"
 
+    # Parse Data
     gene = parse_data(data)
+
+    # Summarise dataframe, i.e. compress rows
+    print("Summarising Data")
     summarised = summarise(gene)
+
+    # Encode nucleotides
+    print("Encoding Data")
     encoded = encoder(summarised, method="test")
 
+    # Prepare and test model
+    print("Running Model")
     clf = pickle.load(open(filename, "rb"))
     cols = encoded.columns.tolist()
     test_new = cols[:2] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[2:-3]
@@ -33,6 +42,7 @@ def main():
     results["score"] = test_pred
     results = results.rename(columns={"position": "transcript_position"})
 
+    print("Saving Results")
     filename = "./results/" + (data.split(".json")[0]).split("./data/")[-1] + ".csv"
     results.to_csv(filename, index=False)
 
