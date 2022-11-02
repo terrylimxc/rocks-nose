@@ -1,5 +1,8 @@
 # DSA4262: rocks-nose
-DSA4262 Project 2 &nbsp; [![GitHub Super-Linter](https://github.com/terrylimxc/rocks-nose/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![GitHub Super-Linter](https://github.com/terrylimxc/rocks-nose/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
+Task 1: Develop a machine learning method to identify RNA modifications from direct RNA-Seq data  
+Task 2: Prediction of m6A sites in all SG-NEx direct RNA-Seq samples  
 
 ## Table of Contents
 * [Introduction](#introduction)
@@ -11,6 +14,7 @@ DSA4262 Project 2 &nbsp; [![GitHub Super-Linter](https://github.com/terrylimxc/r
 * [License](#license)
 
 ## Introduction
+Post-transcriptional modifications of RNA play a huge role in various biological processes  and disease progression, attracting accumulating attention in bioscience research. Among the many different RNA modifications, N6-methyladenosine (m6A) is the most commonly seen mRNA modification. It was reported that on average, 1000 nucleotides are found to contain 1–2 m6A residues. m6A is the methylation that occurs in the N6-position of adenosine, which is the most prevalent internal modification on eukaryotic mRNA. Strong evidence suggests that m6A modulates gene expression and influences the corresponding cell processes and physiological function. m6A affects almost all processes of RNA metabolism, ranging from mRNA translation, degradation to splicing and folding. Emerging evidence has revealed that this m6A modification is closely associated with the activation and inhibition of tumour pathways, and it is significantly linked to the prognosis of cancer patients.  With studies highlighting how restoring the balance of m6A modifications could be a novel anti-cancer strategy, there is a pressing need to accurately detect possible m6A modifications.
 
 ## Getting Started
 ![Python ver](https://img.shields.io/badge/python-v3.10-blue) 
@@ -134,11 +138,8 @@ Official Style Guide: [Pep 8](http://www.python.org/dev/peps/pep-0008/)
 * [TA Yuk Kei](https://github.com/yuukiiwa)
 
 ### Resources
-* [AWS](https://github.com/aws)
-* [argparse](https://docs.python.org/3/library/argparse.html)
-* [orjson](https://github.com/ijl/orjson)
-* [xgboost](https://xgboost.readthedocs.io/en/stable/)
-* [imbalanced-learn](https://imbalanced-learn.org/)
+[SG-NEx](https://github.com/GoekeLab/sg-nex-data), [AWS](https://github.com/aws), [argparse](https://docs.python.org/3/library/argparse.html), 
+[orjson](https://github.com/ijl/orjson), [xgboost](https://xgboost.readthedocs.io/en/stable/), [imbalanced-learn](https://imbalanced-learn.org/)
 
 ## License
 Open Source: ![GitHub](https://img.shields.io/github/license/terrylimxc/rocks-nose)  
