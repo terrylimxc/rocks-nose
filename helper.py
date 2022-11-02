@@ -1,3 +1,4 @@
+import os
 import pickle
 
 import joblib
@@ -185,7 +186,11 @@ def encoder(data, method="train"):
         )
 
         # Creates a joblib file for future encoding of test set
-        joblib.dump(oe, "./results/nucleotide_encoder.joblib")
+        if not os.path.exists("./results"):
+            os.makedirs("./results")
+            joblib.dump(oe, "./results/nucleotide_encoder.joblib")
+        else:
+            joblib.dump(oe, "./results/nucleotide_encoder.joblib")
 
         return train
 
