@@ -15,6 +15,7 @@ def main():
     args = vars(parser.parse_args())
 
     data = "./data/" + args["data"]
+    model = args["model"]
     filename = "./results/" + args["model"] + ".sav"
 
     # Parse Data
@@ -26,7 +27,7 @@ def main():
 
     # Encode nucleotides
     print("Encoding Data")
-    encoded = encoder(summarised, method="test")
+    encoded = encoder(summarised, method="test", out=model)
 
     # Prepare and test model
     print("Running Model")

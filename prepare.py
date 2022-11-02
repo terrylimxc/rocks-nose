@@ -52,7 +52,7 @@ def main():
 
     # Encode nucleotides
     print("Encoding Data")
-    encoded = encoder(summarised)
+    encoded = encoder(summarised, out = output_name)
     cols = encoded.columns.tolist()
     new_cols = cols[:1] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[1:-3]
     encoded = encoded[new_cols]
