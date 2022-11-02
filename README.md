@@ -1,5 +1,6 @@
 # DSA4262: rocks-nose
-[![GitHub Super-Linter](https://github.com/terrylimxc/rocks-nose/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![GitHub Super-Linter](https://github.com/terrylimxc/rocks-nose/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter) 
+![GitHub pull requests](https://img.shields.io/github/issues-pr/terrylimxc/rocks-nose)
 
 Task 1: Develop a machine learning method to identify RNA modifications from direct RNA-Seq data  
 Task 2: Prediction of m6A sites in all SG-NEx direct RNA-Seq samples  
