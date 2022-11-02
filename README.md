@@ -143,4 +143,5 @@ Official Style Guide: [Pep 8](http://www.python.org/dev/peps/pep-0008/)
 [orjson](https://github.com/ijl/orjson), [xgboost](https://xgboost.readthedocs.io/en/stable/), [imbalanced-learn](https://imbalanced-learn.org/)
 
 ## License
-Open Source: ![GitHub](https://img.shields.io/github/license/terrylimxc/rocks-nose)  
+![GitHub](https://img.shields.io/github/license/terrylimxc/rocks-nose)  
+The content of this project itself is licensed under the [MIT license](https://github.com/terrylimxc/rocks-nose/blob/terry/LICENSE).
