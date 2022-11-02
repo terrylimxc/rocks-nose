@@ -22,7 +22,7 @@ Navigate to your home directory:
 cd ~
 ```
 
-Install Python if haven't done so
+Install Python
 ```
 sudo apt-get install python3-pip  
 ```
@@ -51,12 +51,53 @@ pipenv shell
 # Install all dependencies
 pipenv install --dev
 ```
+
 To exit the virtual environment
 ```
 exit
 ```
 
+To delete the virtual environment
+```
+pipenv --rm
+```
+
 ## Usage
+The time taken for each command takes around 2 minutes to execute. 
+Sample training data and testing data have been provided in the `data` folder.
+All results can be retrieved in the `results` folder.
+
+### Train
+```
+python prepare.py -l data.info -d data.json -o model
+```
+#### Options
+```
+--help  -h              Show help message and exit
+
+--label -l              Specify file containing labels for training data
+
+--data  -d              Specify training data
+
+--model -m              Choice of model to use for training (SmoteTomek or BalancedRF)
+                        Default: SmoteTomek
+
+--output -o             Specify name of saved model
+```
+
+### Predict
+```
+python predict.py -d dataset2.json -m model 
+```
+#### Options
+```
+--help  -h              Show help message and exit
+
+--data  -d              Specify testing data
+
+--model -m              Specify saved model to be used for testing
+```
+
 
 ## Contributing
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/terrylimxc/rocks-nose) ![GitHub closed issues](https://img.shields.io/github/issues-closed/terrylimxc/rocks-nose) ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/terrylimxc/rocks-nose)  
