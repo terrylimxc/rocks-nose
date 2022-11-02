@@ -13,6 +13,69 @@ DSA4262 Project 2 &nbsp; [![GitHub Super-Linter](https://github.com/terrylimxc/r
 ## Introduction
 
 ## Getting Started
+![Python ver](https://img.shields.io/badge/python-v3.10-blue) 
+### Configuration
+Firstly, launch an AWS instance. Refer to this tutorial  
+
+Navigate to your home directory:  
+```
+cd ~
+```
+
+Install Python if haven't done so
+```
+[sudo] apt-get install python3-pip  
+```
+
+Git clone this repository
+```
+git clone https://github.com/terrylimxc/rocks-nose.git
+```
+
+Then change into the `rocks-nose` folder
+```
+cd rocks-nose
+```
+
+Create a virtual environment by executing the following commands:
+```
+# Install Virtual Environment
+sudo pip3 install pipenv
+
+# Check virtualenv has been installed successfully  
+pipenv --version  
+
+# Initialise a Virtual Environment of your choice
+pipenv shell
+
+# Install all dependencies
+pipenv install --dev
+```
+To exit the virtual environment
+```
+exit
+```
+
+Using virtualenv
+Create a virtual environment by executing the following commands:
+```
+# Install Virtual Environment
+sudo pip3 install virtualenv  
+
+# Check virtualenv has been installed successfully  
+virtualenv --version  
+
+# Initialise a Virtual Environment of your choice
+virtualenv [name of venv]  
+
+# Activate Virtual Environment
+source 'venv name'/bin/activate  
+```
+
+Install all dependencies
+```
+pip install -r requirements.txt
+```
 
 ## Usage
 
