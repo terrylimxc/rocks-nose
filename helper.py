@@ -166,7 +166,7 @@ def summarise(df, method="mean", flag=False):
     return final_df
 
 
-def encoder(data, method="train"):
+def encoder(data, method="train", out="model"):
     """
     In the handout, it was explained that the nucleotide column of the dataset represents the
     combined nucleotides from the neighboring 1-flanking position. Since this column is in the form
@@ -191,17 +191,19 @@ def encoder(data, method="train"):
         )
 
         # Creates a joblib file for future encoding of test set
+        new_dir = "./results/" + out + "_nucleotide_encoder.joblib"
         if not os.path.exists("./results"):
             os.makedirs("./results")
-            joblib.dump(oe, "./results/nucleotide_encoder.joblib")
+            joblib.dump(oe, new_dir)
         else:
-            joblib.dump(oe, "./results/nucleotide_encoder.joblib")
+            joblib.dump(oe, new_dir)
 
         return train
 
     if method == "test":
         test = data
-        oe = joblib.load("./results/nucleotide_encoder.joblib")
+        new_dir = "./results/" + out + "_nucleotide_encoder.joblib"
+        oe = joblib.load(new_dir)
         test["nucleotide-1"] = test["nucleotide"].str[0:5]
         test["nucleotide+1"] = test["nucleotide"].str[2:7]
         test["nucleotide"] = test["nucleotide"].str[1:6]
