@@ -128,5 +128,17 @@ Official Style Guide: [Pep 8](http://www.python.org/dev/peps/pep-0008/)
   
 ## Acknowledgements
 
+### Teaching Team
+* [Prof Jonathan Göke](https://github.com/jonathangoeke)
+* [TA Christopher Hendra](https://github.com/chrishendra93)
+* [TA Yuk Kei](https://github.com/yuukiiwa)
+
+### Resources
+* [AWS](https://github.com/aws)
+* [argparse](https://docs.python.org/3/library/argparse.html)
+* [orjson](https://github.com/ijl/orjson)
+* [xgboost](https://xgboost.readthedocs.io/en/stable/)
+* [imbalanced-learn](https://imbalanced-learn.org/)
+
 ## License
 Open Source: ![GitHub](https://img.shields.io/github/license/terrylimxc/rocks-nose)  
