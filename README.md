@@ -24,7 +24,7 @@ cd ~
 
 Install Python if haven't done so
 ```
-[sudo] apt-get install python3-pip  
+sudo apt-get install python3-pip  
 ```
 
 Git clone this repository
@@ -42,7 +42,7 @@ Create a virtual environment by executing the following commands:
 # Install Virtual Environment
 sudo pip3 install pipenv
 
-# Check virtualenv has been installed successfully  
+# Check pipenv has been installed successfully  
 pipenv --version  
 
 # Initialise a Virtual Environment of your choice
@@ -54,27 +54,6 @@ pipenv install --dev
 To exit the virtual environment
 ```
 exit
-```
-
-Using virtualenv
-Create a virtual environment by executing the following commands:
-```
-# Install Virtual Environment
-sudo pip3 install virtualenv  
-
-# Check virtualenv has been installed successfully  
-virtualenv --version  
-
-# Initialise a Virtual Environment of your choice
-virtualenv [name of venv]  
-
-# Activate Virtual Environment
-source 'venv name'/bin/activate  
-```
-
-Install all dependencies
-```
-pip install -r requirements.txt
 ```
 
 ## Usage
