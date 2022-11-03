@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 
-
 import orjson
 from tqdm import tqdm
 
