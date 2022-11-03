@@ -1,6 +1,7 @@
+import json
 from pathlib import Path
 
-import json
+
 import orjson
 from tqdm import tqdm
 
@@ -15,6 +16,7 @@ def read_file(data_dir):
                 genes.append(line)
             f.close()
     return genes
+
 
 original_ds3 = read_file("./data/dataset3.json")
 
