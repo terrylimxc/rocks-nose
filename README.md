@@ -20,7 +20,7 @@ Post-transcriptional modifications of RNA play a huge role in various biological
 ## Getting Started
 ![Python ver](https://img.shields.io/badge/python-v3.10-blue) 
 ### Configuration
-Firstly, launch an AWS instance. Refer to this tutorial  
+Firstly, launch an AWS instance. Refer to this [tutorial](https://docs.google.com/document/d/1uuayqen_uVS799qMsHEY06h6-Way3F7FW2Is2-f5s9I/edit?usp=sharing)  
 
 Navigate to your home directory:  
 ```
@@ -92,7 +92,7 @@ python prepare.py -l data.info -d data.json -o model
 
 ### Predict
 ```
-python predict.py -d dataset2.json -m model 
+python predict.py -d dataset3.json -m model 
 ```
 #### Options
 ```
