@@ -92,7 +92,7 @@ python prepare.py -l data.info -d data.json -o model
 
 ### Predict
 ```
-python predict.py -d dataset3.json -m model 
+python predict.py -d sample.json -m model 
 ```
 #### Options
 ```
