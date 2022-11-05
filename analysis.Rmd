@@ -1,0 +1,53 @@
+---
+title: "DSA4262 analysis"
+author: "Wen Yong"
+date: "11/4/2022"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+data1 = read.csv("SGNex_A549_directRNA_replicate6_run1_pred.csv") %>% rename(score1=score)
+data2 = read.csv("SGNex_HepG2_directRNA_replicate5_run2_pred.csv")%>% rename(score2=score)
+data3 = read.csv("SGNex_K562_directRNA_replicate5_run1_pred.csv")%>% rename(score3=score)
+data4 = read.csv("SGNex_MCF7_directRNA_replicate3_run1_pred.csv")%>% rename(score4=score)
+data5 = read.csv("data.info")
+data5 <- data5 %>% select(-c(gene_id))
+
+df = merge(merge(merge(merge(
+  data1, data2, all = FALSE),
+  data3, all = F),
+  data4, all = F),
+  data5, all = F)
+
+df <- df %>% 
+  mutate(score1 = ifelse(score1>0.5, 1,0),
+         score2 = ifelse(score2>0.5, 1,0),
+         score3 = ifelse(score3>0.5, 1,0),
+         score4 = ifelse(score4>0.5, 1,0)
+         )
+
+```
+
+
+```{r}
+df %>% 
+  filter((score1 != label | score2 != label | score3 != label | score4 != label)) %>%
+  mutate(score = ifelse(label==0, score1+score2+score3+score4, 4-(score1+score2+score3+score4))) %>%
+  group_by(score) %>%
+  count()
+
+df %>% 
+  filter((score1 != label | score2 != label | score3 != label | score4 != label)) %>%
+  mutate(score = ifelse(label==0, score1+score2+score3+score4, 4-(score1+score2+score3+score4))) %>%
+  ggplot(aes(x=score)) +
+  geom_bar(fill = '#E495A5') +
+  labs(x="Number of wrong predictions",
+       y= "Count",
+       title="Frequency of wrong predictions across 4 cell lines (A549,HepG2,K562,MCF7)") 
+
+```
+
