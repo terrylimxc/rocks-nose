@@ -29,7 +29,6 @@ def main():
     print("Encoding Data")
     encoded = encoder(summarised, method="test", out=model)
     encoded_filename = (data.split(".json")[0]).split("./data/")[-1]
-    encoded.to_csv(f"./results/encoded_{encoded_filename}.csv", index=False)
 
     # Prepare and test model
     print("Running Model")
@@ -37,6 +36,7 @@ def main():
     cols = encoded.columns.tolist()
     test_new = cols[:2] + [cols[-2]] + [cols[-3]] + [cols[-1]] + cols[2:-3]
     encoded = encoded[test_new]
+    encoded.to_csv(f"./results/encoded_{encoded_filename}.csv", index=False)
 
     test_pred = clf.predict_proba(encoded.drop(columns=["transcript_id", "position"]))[
         :, 1

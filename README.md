@@ -1,6 +1,8 @@
 # DSA4262: rocks-nose
 [![GitHub Super-Linter](https://github.com/terrylimxc/rocks-nose/actions/workflows/linter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter) 
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/terrylimxc/rocks-nose)
+![GitHub repo size](https://img.shields.io/github/repo-size/terrylimxc/rocks-nose)
+![GitHub last commit](https://img.shields.io/github/last-commit/terrylimxc/rocks-nose)
 
 Task 1: Develop a machine learning method to identify RNA modifications from direct RNA-Seq data  
 Task 2: Prediction of m6A sites in all SG-NEx direct RNA-Seq samples  
@@ -18,7 +20,16 @@ Task 2: Prediction of m6A sites in all SG-NEx direct RNA-Seq samples
 Post-transcriptional modifications of RNA play a huge role in various biological processes  and disease progression, attracting accumulating attention in bioscience research. Among the many different RNA modifications, N6-methyladenosine (m6A) is the most commonly seen mRNA modification. It was reported that on average, 1000 nucleotides are found to contain 1–2 m6A residues. m6A is the methylation that occurs in the N6-position of adenosine, which is the most prevalent internal modification on eukaryotic mRNA. Strong evidence suggests that m6A modulates gene expression and influences the corresponding cell processes and physiological function. m6A affects almost all processes of RNA metabolism, ranging from mRNA translation, degradation to splicing and folding. Emerging evidence has revealed that this m6A modification is closely associated with the activation and inhibition of tumour pathways, and it is significantly linked to the prognosis of cancer patients.  With studies highlighting how restoring the balance of m6A modifications could be a novel anti-cancer strategy, there is a pressing need to accurately detect possible m6A modifications.
 
 ## Getting Started
-![Python ver](https://img.shields.io/badge/python-v3.10-blue) 
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black)
+![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)
+![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)
+
 ### Configuration
 Firstly, launch an AWS instance. Refer to this [tutorial](https://docs.google.com/document/d/1uuayqen_uVS799qMsHEY06h6-Way3F7FW2Is2-f5s9I/edit?usp=sharing)  
 
@@ -92,7 +103,7 @@ python prepare.py -l data.info -d data.json -o model
 
 ### Predict
 ```
-python predict.py -d dataset3.json -m model 
+python predict.py -d sample.json -m model 
 ```
 #### Options
 ```
@@ -143,5 +154,5 @@ Official Style Guide: [Pep 8](http://www.python.org/dev/peps/pep-0008/)
 [orjson](https://github.com/ijl/orjson), [xgboost](https://xgboost.readthedocs.io/en/stable/), [imbalanced-learn](https://imbalanced-learn.org/)
 
 ## License
-![GitHub](https://img.shields.io/github/license/terrylimxc/rocks-nose)  
+ [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)  
 The content of this project itself is licensed under the [MIT license](https://github.com/terrylimxc/rocks-nose/blob/terry/LICENSE).
