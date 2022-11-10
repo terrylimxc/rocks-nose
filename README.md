@@ -85,7 +85,7 @@ All results can be retrieved in the `results` folder.
 
 ### Train
 ```
-python prepare.py -l data.info -d data.json -o model
+python prepare.py -l data.info -d sample_training.json -o model
 ```
 #### Options
 ```
@@ -103,7 +103,7 @@ python prepare.py -l data.info -d data.json -o model
 
 ### Predict
 ```
-python predict.py -d sample.json -m model 
+python predict.py -d sample_testing.json -m model 
 ```
 #### Options
 ```
