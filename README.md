@@ -31,7 +31,7 @@ Post-transcriptional modifications of RNA play a huge role in various biological
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)
 
 ### Configuration
-Firstly, launch an AWS instance. Refer to this [tutorial](https://docs.google.com/document/d/1uuayqen_uVS799qMsHEY06h6-Way3F7FW2Is2-f5s9I/edit?usp=sharing)  
+Firstly, launch an AWS instance. Refer to this [tutorial](Research%20Gateway%20Tutorial.docx)  
 
 Navigate to your home directory:  
 ```
